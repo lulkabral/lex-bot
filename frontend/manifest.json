@@ -1,0 +1,19 @@
+{
+  "name": "Lex — Consumer AI Agent",
+  "short_name": "Lex",
+  "description": "Seu agente pessoal de inteligência artificial com mochila inteligente e computador próprio.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F2E8",
+  "theme_color": "#FF4800",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/icons/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "education", "finance"]
+}

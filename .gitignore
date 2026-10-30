@@ -1,0 +1,42 @@
+# ==============================================================================
+# Lex Bot — Git Ignore Configuration
+# ==============================================================================
+
+# Environment variables & secrets (CRITICAL: NEVER COMMIT REAL API KEYS)
+.env
+backend/.env
+*.env
+*.env.*
+!.env.example
+!backend/.env.example
+
+# Python Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python Cache & Bytecode
+__pycache__/
+backend/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Database & local user data (CRITICAL: Mochila local do usuário)
+backend/lex_backpack.json
+lex_backpack.json
+*.json.tmp
+*.tmp
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log

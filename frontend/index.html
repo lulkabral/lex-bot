@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lex — Agente Pessoal de IA</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#08090A">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/svg+xml" href="/static/icons/icon.svg">
+
+  <!-- Tipografia Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="state-idle mode-welcome">
+
+  <!-- ======================= APP LAYOUT ======================= -->
+  <div class="app-layout" id="app-layout">
+
+    <!-- ======================= SIDEBAR (Esquerda) ======================= -->
+    <aside class="sidebar" id="app-sidebar" aria-label="Painel de Navegação">
+      
+      <!-- Topbar da Sidebar: Controles de Janela macOS + Nova Conversa -->
+      <div class="sidebar-header">
+        <div class="mac-controls" aria-hidden="true">
+          <span class="mac-dot mac-dot--red" title="Fechar"></span>
+          <span class="mac-dot mac-dot--yellow" title="Minimizar"></span>
+          <span class="mac-dot mac-dot--green" title="Expandir"></span>
+        </div>
+        <button type="button" class="sidebar-icon-btn" id="btn-new-chat-sidebar" title="Iniciar Nova Conversa" aria-label="Nova conversa">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </div>
+
+      <!-- Barra de Pesquisa de Conversas -->
+      <div class="sidebar-search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+        <input type="text" id="sidebar-search-input" placeholder="Buscar conversas..." autocomplete="off" spellcheck="false">
+        <button type="button" class="search-clear-btn" id="btn-clear-search" aria-label="Limpar busca" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+
+      <!-- Lista de Conversas / Histórico -->
+      <div class="sidebar-conversations-section">
+        <div class="conversations-header">
+          <span>Conversas Recentes</span>
+        </div>
+        <div class="conversations-list" id="conversations-list" role="listbox" aria-label="Histórico de conversas">
+          <!-- Gerado dinamicamente via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Rodapé da Sidebar: Uso Semanal, Ações e Perfil -->
+      <div class="sidebar-footer">
+        
+        <!-- Menu Secundário -->
+        <nav class="sidebar-menu" aria-label="Menu da conta">
+          
+          <!-- Card de Uso Semanal -->
+          <div class="usage-card" id="sidebar-usage-item" title="Cota semanal ilimitada com Lex Pro">
+            <div class="usage-head">
+              <span class="usage-title">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Uso semanal
+              </span>
+              <span class="usage-pct">100%</span>
+            </div>
+            <div class="usage-track">
+              <div class="usage-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <button type="button" class="menu-item" id="btn-menu-pwa">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Obter Lex para Desktop</span>
+          </button>
+
+          <button type="button" class="menu-item" id="btn-menu-pro">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>Plano Lex Pro</span>
+          </button>
+
+          <button type="button" class="menu-item" id="btn-menu-settings">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Configurações</span>
+          </button>
+
+          <button type="button" class="menu-item" id="btn-menu-help">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>Central de Ajuda</span>
+          </button>
+        </nav>
+
+        <!-- Perfil do Usuário -->
+        <div class="user-card">
+          <div class="user-avatar" aria-hidden="true">
+            <span>L</span>
+          </div>
+          <div class="user-meta">
+            <span class="user-name">Luan</span>
+            <span class="user-plan">Lex Pro</span>
+          </div>
+          <button type="button" class="user-action-btn" id="btn-user-options" title="Opções da conta" aria-label="Mais opções">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Backdrop escuro para fechar a sidebar no mobile -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+
+    <!-- ======================= ÁREA PRINCIPAL DO CHAT (Direita) ======================= -->
+    <div class="main-wrapper">
+      
+      <!-- Topbar do Chat -->
+      <header class="chat-topbar">
+        <div class="chat-topbar-left">
+          <button type="button" class="icon-toggle-btn" id="btn-toggle-sidebar" title="Alternar barra lateral" aria-label="Alternar barra lateral">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+          </button>
+
+          <div class="brand">
+            <!-- No modo conversa, o avatar do Lex é acoplado aqui e segue reagindo ao vivo -->
+            <div class="avatar-dock" id="avatar-dock" aria-hidden="true"></div>
+            <div class="brand-text">
+              <span class="brand-name">Lex</span>
+              <span class="brand-status" id="live-status"><span class="status-dot"></span><span id="live-status-text">Online</span></span>
+            </div>
+          </div>
+        </div>
+
+        <nav class="chat-topbar-right" aria-label="Ações rápidas">
+          <button class="topbar-btn" id="btn-clear-chat" type="button" title="Limpar conversa atual">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <span class="btn-label">Limpar</span>
+          </button>
+
+          <button class="topbar-btn topbar-btn--accent" id="btn-open-backpack" type="button" title="Abrir Mochila do Lex">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 8a6 6 0 0 1 12 0v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8z"/>
+              <path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+              <line x1="9" y1="13" x2="15" y2="13"/>
+            </svg>
+            <span class="btn-label">Mochila</span>
+            <span class="count-badge" id="backpack-total-badge">0</span>
+          </button>
+        </nav>
+      </header>
+
+      <!-- Viewport de Mensagens -->
+      <main class="chat-viewport" id="main">
+
+        <!-- Boas-vindas (Hero quando o chat está vazio) -->
+        <section class="hero" id="hero" aria-labelledby="hero-title">
+          <div class="avatar-home" id="avatar-home">
+            <!-- Avatar oficial do Lex (instância única na página, com micro-animações) -->
+            <div class="avatar-stage" id="avatar-stage" title="Oi, eu sou o Lex!">
+              <div class="soundwaves" aria-hidden="true">
+                <span class="soundwave-ring"></span>
+                <span class="soundwave-ring"></span>
+                <span class="soundwave-ring"></span>
+              </div>
+
+              <svg id="lex-avatar" viewBox="0 0 300 320" width="220" height="235" xmlns="http://www.w3.org/2000/svg">
+                <!-- Orelha Esquerda -->
+                <g id="ear-left">
+                  <path d="M 65 130 L 52 28 Q 50 12 64 22 L 135 80 Z" fill="#FF4800" stroke="#FF4800" stroke-width="8" stroke-linejoin="round"/>
+                  <path d="M 73 108 L 64 42 Q 63 34 71 40 L 116 76 Q 122 81 114 86 L 80 110 Q 74 114 73 108 Z" fill="#FFFFFF"/>
+                </g>
+                <!-- Orelha Direita -->
+                <g id="ear-right">
+                  <path d="M 235 130 L 248 28 Q 250 12 236 22 L 165 80 Z" fill="#FF4800" stroke="#FF4800" stroke-width="8" stroke-linejoin="round"/>
+                  <path d="M 227 108 L 236 42 Q 237 34 229 40 L 184 76 Q 178 81 186 86 L 220 110 Q 226 114 227 108 Z" fill="#FFFFFF"/>
+                </g>
+                <!-- Cabeça Redonda Laranja -->
+                <circle id="lex-head" cx="150" cy="175" r="102" fill="#FF4800"/>
+                <!-- Olhos em Pílula Brancos com Animação Natural de Piscar -->
+                <g id="lex-eyes">
+                  <rect id="eye-left" x="82" y="116" width="44" height="72" rx="22" fill="#FFFFFF"/>
+                  <rect id="eye-right" x="174" y="116" width="44" height="72" rx="22" fill="#FFFFFF"/>
+                </g>
+                <!-- Óculos do Modo "Thinking / Computador" -->
+                <g id="lex-glasses" opacity="0">
+                  <rect x="74" y="110" width="60" height="84" rx="28" fill="none" stroke="#000000" stroke-width="6"/>
+                  <rect x="166" y="110" width="60" height="84" rx="28" fill="none" stroke="#000000" stroke-width="6"/>
+                  <line x1="134" y1="148" x2="166" y2="148" stroke="#000000" stroke-width="6"/>
+                </g>
+                <!-- Focinho Redondo Preto na Base -->
+                <circle id="lex-nose" cx="150" cy="268" r="33" fill="#000000"/>
+              </svg>
+            </div>
+          </div>
+
+          <h1 class="hero-title" id="hero-title">Como posso organizar seu dia?</h1>
+          <p class="hero-subtitle" id="hero-subtitle">Converse por texto ou voz. Eu cuido de tabelas, estudos e tarefas na sua Mochila.</p>
+
+          <!-- Sugestões sem emojis — com ícones vetoriais em squircle -->
+          <div class="suggestions-grid" role="list">
+            <button class="suggestion-card" type="button" role="listitem" data-fill="Gastei R$ ">
+              <div class="suggestion-icon-squircle">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              </div>
+              <div class="suggestion-texts">
+                <strong>Anotar um gasto</strong>
+                <small>Valor, categoria e tipo</small>
+              </div>
+            </button>
+
+            <button class="suggestion-card" type="button" role="listitem" data-fill="Crie flashcards sobre ">
+              <div class="suggestion-icon-squircle">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              </div>
+              <div class="suggestion-texts">
+                <strong>Criar flashcards</strong>
+                <small>Treino de estudo interativo</small>
+              </div>
+            </button>
+
+            <button class="suggestion-card" type="button" role="listitem" data-fill="Registre a tarefa: ">
+              <div class="suggestion-icon-squircle">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <div class="suggestion-texts">
+                <strong>Registrar aula ou tarefa</strong>
+                <small>Salva em tabela estruturada</small>
+              </div>
+            </button>
+
+            <button class="suggestion-card" type="button" role="listitem" data-fill="Me lembre de ">
+              <div class="suggestion-icon-squircle">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div class="suggestion-texts">
+                <strong>Marcar um lembrete</strong>
+                <small>Com data e horário na agenda</small>
+              </div>
+            </button>
+          </div>
+        </section>
+
+        <!-- Linha do Tempo da Conversa -->
+        <section class="chat-stream" id="chat-timeline" aria-live="polite" aria-label="Mensagens da conversa"></section>
+
+      </main>
+
+      <!-- ======================= COMPOSER (Pill Grok Style) ======================= -->
+      <footer class="chat-composer">
+        <div class="composer-shell">
+          
+          <!-- Prévia da Foto Anexada -->
+          <div class="photo-preview-bar" id="photo-preview-bar" hidden>
+            <img id="photo-preview-img" src="" alt="Foto anexada">
+            <span id="photo-preview-name">foto.jpg</span>
+            <button type="button" class="photo-remove-btn" id="btn-remove-photo" aria-label="Remover foto">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+            </button>
+          </div>
+
+          <!-- Barra Pill de Input -->
+          <form class="composer-pill" id="composer-form" autocomplete="off">
+            <input type="file" id="file-photo-input" accept="image/*" hidden>
+            
+            <!-- Botão Circular + para Ações / Anexos -->
+            <button type="button" class="composer-circle-btn" id="btn-trigger-photo" title="Anexar arquivo ou foto" aria-label="Anexar arquivo">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+
+            <label for="chat-input-text" class="visually-hidden">Mensagem para o Lex</label>
+            <textarea id="chat-input-text" rows="1" placeholder="Pergunte algo ou peça para o Lex organizar..." enterkeyhint="send"></textarea>
+
+            <div class="composer-right-actions">
+              <!-- Botão de Microfone -->
+              <button type="button" class="composer-circle-btn" id="btn-mic-record" title="Gravar mensagem de voz" aria-label="Gravar áudio" aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+              </button>
+
+              <!-- Botão de Envio com Seta para Cima -->
+              <button type="submit" class="composer-send-btn" id="btn-send-message" title="Enviar mensagem" aria-label="Enviar" disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+              </button>
+            </div>
+          </form>
+
+          <p class="composer-disclaimer">O Lex organiza seus dados com IA. Verifique dados críticos.</p>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- ======================= MOCHILA (Drawer Nativo) ======================= -->
+  <dialog class="drawer" id="backpack-dialog" closedby="any" aria-labelledby="backpack-heading">
+    <div class="drawer-shell">
+      <header class="drawer-header">
+        <div class="drawer-header-info">
+          <div class="drawer-title-row">
+            <svg class="drawer-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 8a6 6 0 0 1 12 0v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8z"/>
+              <path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+              <line x1="9" y1="13" x2="15" y2="13"/>
+            </svg>
+            <h2 id="backpack-heading">Mochila do Lex</h2>
+          </div>
+          <p>Tudo o que o Lex já organizou e estruturou para você</p>
+        </div>
+        <button type="button" class="icon-close-btn" id="btn-close-backpack" aria-label="Fechar Mochila">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+
+      <!-- Abas da Mochila com Ícones Vetoriais Limpos -->
+      <nav class="drawer-tabs" role="tablist" aria-label="Seções da Mochila">
+        <button class="drawer-tab active" role="tab" data-tab="tables" aria-selected="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          <span>Tabelas</span>
+          <span class="tab-count" data-count="tables">0</span>
+        </button>
+        <button class="drawer-tab" role="tab" data-tab="flashcards" aria-selected="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="16" height="18" x="4" y="3" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <span>Flashcards</span>
+          <span class="tab-count" data-count="flashcards">0</span>
+        </button>
+        <button class="drawer-tab" role="tab" data-tab="agenda" aria-selected="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Agenda</span>
+          <span class="tab-count" data-count="agenda">0</span>
+        </button>
+        <button class="drawer-tab" role="tab" data-tab="summaries" aria-selected="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Resumos</span>
+          <span class="tab-count" data-count="summaries">0</span>
+        </button>
+      </nav>
+
+      <div class="drawer-body">
+        <div class="pane active" id="pane-tables" role="tabpanel"></div>
+        <div class="pane" id="pane-flashcards" role="tabpanel">
+          <div class="deck-picker" id="deck-selector-bar" role="listbox" aria-label="Escolha um baralho"></div>
+          <div id="flashcard-viewer"></div>
+        </div>
+        <div class="pane" id="pane-agenda" role="tabpanel"></div>
+        <div class="pane" id="pane-summaries" role="tabpanel"></div>
+      </div>
+
+      <footer class="drawer-footer">
+        <span id="backpack-footer-stat">0 itens organizados</span>
+        <button type="button" class="drawer-undo-btn" id="btn-drawer-undo">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+          <span>Desfazer última alteração</span>
+        </button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- ======================= MODAL LEX PRO ======================= -->
+  <dialog class="modal" id="pro-dialog" closedby="any" aria-labelledby="pro-title">
+    <form method="dialog" class="modal-card">
+      <button class="icon-close-btn modal-close" value="close" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+      <span class="pro-tag">LEX PRO</span>
+      <h3 id="pro-title">Seu Lex sem limites</h3>
+      <p class="modal-sub">Produtividade contínua com raciocínio avançado para o dia a dia.</p>
+      <ul class="feature-list">
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Conversas e ferramentas ilimitadas</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Visão computacional e leitura de fotos/documentos</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Exportação para planilhas CSV e relatórios</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Voz ultrarrápida com Whisper e GPT-OSS</span>
+        </li>
+      </ul>
+      <div class="plan-compare">
+        <div><strong>Plano Grátis</strong><small>Limite de interações diárias</small></div>
+        <div class="plan-pro"><strong>R$ 29,90/mês</strong><small>Acesso irrestrito a todas as ferramentas</small></div>
+      </div>
+      <button type="button" class="primary-btn" id="btn-simulate-pro-upgrade">Assinar Lex Pro</button>
+    </form>
+  </dialog>
+
+  <!-- Toast de Notificações -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

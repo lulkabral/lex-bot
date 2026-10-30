@@ -1,0 +1,18 @@
+<svg viewBox="0 0 512 512" width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="128" fill="#F8F2E8"/>
+  <g transform="translate(106, 86) scale(1.0)">
+    <!-- Orelha Esquerda -->
+    <path d="M 65 130 L 52 28 Q 50 12 64 22 L 135 80 Z" fill="#FF4800" stroke="#FF4800" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M 73 108 L 64 42 Q 63 34 71 40 L 116 76 Q 122 81 114 86 L 80 110 Q 74 114 73 108 Z" fill="#FFFFFF"/>
+    <!-- Orelha Direita -->
+    <path d="M 235 130 L 248 28 Q 250 12 236 22 L 165 80 Z" fill="#FF4800" stroke="#FF4800" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M 227 108 L 236 42 Q 237 34 229 40 L 184 76 Q 178 81 186 86 L 220 110 Q 226 114 227 108 Z" fill="#FFFFFF"/>
+    <!-- Cabeça Redonda Laranja -->
+    <circle cx="150" cy="175" r="102" fill="#FF4800"/>
+    <!-- Olhos em Pílula Brancos -->
+    <rect x="82" y="116" width="44" height="72" rx="22" fill="#FFFFFF"/>
+    <rect x="174" y="116" width="44" height="72" rx="22" fill="#FFFFFF"/>
+    <!-- Focinho Redondo Preto na Base -->
+    <circle cx="150" cy="268" r="33" fill="#000000"/>
+  </g>
+</svg>
